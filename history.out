@@ -1,0 +1,156 @@
+    1  export PAGER=cat SYSTEMD_PAGER=cat
+    2  nmcli con mod ens18 ipv4.method auto
+    3  nmcli -f ipv4.method,IP4.ADDRESS,IP4.GATEWAY con show ens18
+    4  hostnamectl set-hostname mephi-2026.domain.local
+    5  hostnamectl hostname
+    6  ping -c 4 8.8.8.8 > ~/ping.out
+    7  cat ~/ping.out
+    8  dnf -y update
+    9  dnf -y install nginx libcap-ng-utils
+   10  rpm -q nginx libcap-ng-utils
+   11  dnf download tcpdump --destdir /tmp
+   12  ls -l /tmp/tcpdump*.rpm
+   13  rpm -e tcpdump
+   14  rpm -ivh /tmp/tcpdump-*.rpm
+   15  rpm -qi tcpdump | head -n 3
+   16  dnf history > ~/dnf.out
+   17  systemctl enable --now nginx
+   18  systemctl is-enabled nginx
+   19  systemctl is-active nginx
+   20  mkdir -p /data/mephi-2026
+   21  groupadd -g 4444 curators
+   22  groupadd -g 5500 developers
+   23  useradd -u 5501 -G developers user1
+   24  useradd -u 5502 -G developers user2
+   25  useradd -u 5503 -G developers user3
+   26  useradd -G curators curator1
+   27  useradd -G curators curator2
+   28  echo 'user1:MephiDev2026!!' | chpasswd
+   29  echo 'user2:MephiDev2026!!' | chpasswd
+   30  echo 'user3:MephiDev2026!!' | chpasswd
+   31  echo 'curator1:MephiCurator2026!' | chpasswd
+   32  echo 'curator2:MephiCurator2026!' | chpasswd
+   33  id user1 user2 user3 curator1 curator2
+   34  chown root:developers /data/mephi-2026
+   35  chmod 2770 /data/mephi-2026
+   36  setfacl -m g:developers:rwx,g:curators:r-x,o::--- /data/mephi-2026
+   37  setfacl -d -m u::rwx,g::rwx,g:developers:rwx,g:curators:r-x,o::--- /data/mephi-2026
+   38  getfacl /data/mephi-2026
+   39  sudo -u user1 bash -c 'echo "created by user1" > /data/mephi-2026/file-user1.txt'
+   40  sudo -u user2 bash -c 'echo "appended by user2" >> /data/mephi-2026/file-user1.txt; cat /data/mephi-2026/file-user1.txt'
+   41  sudo -u user3 mkdir /data/mephi-2026/dir-user3
+   42  sudo -u user1 touch /data/mephi-2026/dir-user3/file-in-dir
+   43  sudo -u curator1 cat /data/mephi-2026/file-user1.txt
+   44  sudo -u curator1 bash -c 'echo "curator write" >> /data/mephi-2026/file-user1.txt'
+   45  sudo -u curator2 ls -l /data/mephi-2026/
+   46  sudo -u nobody ls /data/mephi-2026/
+   47  getfacl /data/mephi-2026/file-user1.txt
+   48  ls -l /usr/sbin/tcpdump
+   49  getcap /usr/sbin/tcpdump
+   50  sudo -u user1 tcpdump -c 1 -i ens18 2>&1 | head -n 2
+   51  setcap cap_net_raw,cap_net_admin=eip /usr/sbin/tcpdump
+   52  getcap /usr/sbin/tcpdump
+   53  sudo -u user1 timeout 15 tcpdump -c 3 -nn -i ens18 2>&1 | tail -n 5
+   54  printf '# Кураторам проекта запрещён локальный вход в систему\n- : curators : ALL\n' > /etc/security/access-console.conf
+   55  cat /etc/security/access-console.conf
+   56  sed -i '/^account[[:space:]]*required[[:space:]]*pam_nologin.so/a account    required     pam_access.so accessfile=/etc/security/access-console.conf' /etc/pam.d/login /etc/pam.d/sddm
+   57  grep -n pam_access /etc/pam.d/login /etc/pam.d/sddm
+   58  python3 ~/pam-check.py login curator1 'MephiCurator2026!'
+   59  python3 ~/pam-check.py login user1 'MephiDev2026!!'
+   60  python3 ~/pam-check.py sddm curator2 'MephiCurator2026!'
+   61  sed -i 's/^PASS_MAX_DAYS.*/PASS_MAX_DAYS\t90/' /etc/login.defs
+   62  grep -E '^PASS_(MAX|MIN)_DAYS' /etc/login.defs
+   63  for u in user1 user2 user3 curator1 curator2; do chage -M 90 $u; done
+   64  chage -l user1
+   65  sed -i 's/^# minlen = 8/minlen = 12/' /etc/security/pwquality.conf
+   66  grep -nE '^minlen' /etc/security/pwquality.conf
+   67  echo 'Short1!' | pwscore
+   68  echo 'MephiDev2026!!' | pwscore
+   69  export PAGER=cat SYSTEMD_PAGER=cat
+   70  rm -f /tmp/tcpdump-*.i686.rpm
+   71  rpm -ivh /tmp/tcpdump-*.x86_64.rpm
+   72  rpm -qi tcpdump | head -n 3
+   73  dnf history > ~/dnf.out
+   74  ls -l /usr/sbin/tcpdump
+   75  getcap /usr/sbin/tcpdump
+   76  sudo -u user1 tcpdump -c 1 -i ens18 2>&1 | head -n 2
+   77  setcap cap_net_raw,cap_net_admin=eip /usr/sbin/tcpdump
+   78  getcap /usr/sbin/tcpdump
+   79  sudo -u user1 timeout 15 tcpdump -c 3 -nn -i ens18 2>&1 | tail -n 5
+   80  export PAGER=cat SYSTEMD_PAGER=cat
+   81  lsblk /dev/sdb
+   82  parted -s /dev/sdb mklabel gpt
+   83  parted -s /dev/sdb mkpart mephi-web ext4 0% 100%
+   84  parted /dev/sdb print
+   85  mkfs.ext4 -L MEPHI_WEB /dev/sdb1
+   86  blkid /dev/sdb1
+   87  mkdir -p /mephi-web
+   88  echo 'LABEL=MEPHI_WEB  /mephi-web  ext4  defaults  0 2' >> /etc/fstab
+   89  tail -n 1 /etc/fstab
+   90  systemctl daemon-reload
+   91  mount /mephi-web
+   92  findmnt /mephi-web
+   93  df -h /mephi-web
+   94  getenforce
+   95  grep -E '^SELINUX=' /etc/selinux/config
+   96  grep -n 'root ' /etc/nginx/nginx.conf
+   97  sed -i '0,/^\s*root\s\+\/usr\/share\/nginx\/html;/s||        root         /mephi-web;|' /etc/nginx/nginx.conf
+   98  grep -n 'root ' /etc/nginx/nginx.conf
+   99  echo 'Hello from Student: 373076' > /mephi-web/index.html
+  100  ls -lZ /mephi-web
+  101  semanage fcontext -a -t httpd_sys_content_t '/mephi-web(/.*)?'
+  102  semanage fcontext -l | grep mephi-web
+  103  restorecon -Rv /mephi-web
+  104  ls -ldZ /mephi-web
+  105  ls -lZ /mephi-web
+  106  nginx -t
+  107  systemctl restart nginx
+  108  systemctl is-active nginx
+  109  curl http://localhost/
+  110  ausearch -m avc -ts recent 2>/dev/null | tail -n 3
+  111  mkdir -p ~/mephi-artifacts/extra
+  112  ping -c 4 8.8.8.8 > ~/ping.out
+  113  stat /data/mephi-2026 > ~/stat.out
+  114  getcap /usr/sbin/tcpdump > ~/getcap.out
+  115  dnf history > ~/dnf.out
+  116  journalctl -u nginx -b > ~/journalctl.out
+  117  getenforce > ~/getenforce.out
+  118  stat /mephi-web >> ~/stat.out
+  119  curl http://localhost/ > ~/curl.out
+  120  cat ~/stat.out ~/getcap.out ~/getenforce.out ~/curl.out
+  121  cp /etc/fstab /etc/passwd /etc/shadow /etc/group /etc/security/pwquality.conf ~/mephi-artifacts/
+  122  cp /tmp/tcpdump-*.rpm ~/mephi-artifacts/
+  123  cp /etc/nginx/nginx.conf /etc/login.defs /etc/security/access-console.conf ~/mephi-artifacts/extra/
+  124  cp /etc/pam.d/login ~/mephi-artifacts/extra/pam.d-login
+  125  cp /etc/pam.d/sddm ~/mephi-artifacts/extra/pam.d-sddm
+  126  getfacl /data/mephi-2026 /data/mephi-2026/file-user1.txt > ~/mephi-artifacts/extra/getfacl.out
+  127  ls -laZ /mephi-web /data/mephi-2026 > ~/mephi-artifacts/extra/ls-Z.out
+  128  id user1 user2 user3 curator1 curator2 > ~/mephi-artifacts/extra/id.out
+  129  chage -l user1 > ~/mephi-artifacts/extra/chage-user1.out
+  130  cp ~/ping.out ~/stat.out ~/getcap.out ~/dnf.out ~/journalctl.out ~/getenforce.out ~/curl.out ~/mephi-artifacts/
+  131  history > ~/history.out
+  132  cp ~/history.out ~/mephi-artifacts/
+  133  ls -lR ~/mephi-artifacts
+  134  export PAGER=cat SYSTEMD_PAGER=cat
+  135  grep -n pam_access /etc/pam.d/login /etc/pam.d/sddm
+  136  sed -i '0,/pam_access.so/b; /pam_access.so/d' /etc/pam.d/login
+  137  sed -i '0,/pam_access.so/b; /pam_access.so/d' /etc/pam.d/sddm
+  138  grep -n pam_access /etc/pam.d/login /etc/pam.d/sddm
+  139  python3 ~/pam-check.py login curator1 'MephiCurator2026!'
+  140  python3 ~/pam-check.py login user1 'MephiDev2026!!'
+  141  dnf download --arch x86_64 tcpdump --destdir /tmp
+  142  ls -l /tmp/tcpdump*.rpm
+  143  rpm -ivh /tmp/tcpdump-*.x86_64.rpm
+  144  rpm -q tcpdump
+  145  ls -l /usr/sbin/tcpdump
+  146  setcap cap_net_raw,cap_net_admin=eip /usr/sbin/tcpdump
+  147  getcap /usr/sbin/tcpdump
+  148  sudo -u user1 timeout 15 tcpdump -c 3 -nn -i ens18 2>&1 | tail -n 5
+  149  getcap /usr/sbin/tcpdump > ~/getcap.out
+  150  dnf history > ~/dnf.out
+  151  chage -l user1 > ~/mephi-artifacts/extra/chage-user1.out
+  152  cp /tmp/tcpdump-*.rpm ~/mephi-artifacts/
+  153  cp /etc/pam.d/login ~/mephi-artifacts/extra/pam.d-login
+  154  cp /etc/pam.d/sddm ~/mephi-artifacts/extra/pam.d-sddm
+  155  cp ~/getcap.out ~/dnf.out ~/mephi-artifacts/
+  156  history > ~/history.out

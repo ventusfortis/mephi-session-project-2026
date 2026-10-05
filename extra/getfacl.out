@@ -1,0 +1,27 @@
+# file: data/mephi-2026
+# owner: root
+# group: developers
+# flags: -s-
+user::rwx
+group::rwx
+group:curators:r-x
+group:developers:rwx
+mask::rwx
+other::---
+default:user::rwx
+default:group::rwx
+default:group:curators:r-x
+default:group:developers:rwx
+default:mask::rwx
+default:other::---
+
+# file: data/mephi-2026/file-user1.txt
+# owner: user1
+# group: developers
+user::rw-
+group::rwx	#effective:rw-
+group:curators:r-x	#effective:r--
+group:developers:rwx	#effective:rw-
+mask::rw-
+other::---
+

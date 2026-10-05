@@ -1,0 +1,5 @@
+uid=5501(user1) gid=5501(user1) группы=5501(user1),5500(developers)
+uid=5502(user2) gid=5502(user2) группы=5502(user2),5500(developers)
+uid=5503(user3) gid=5503(user3) группы=5503(user3),5500(developers)
+uid=5504(curator1) gid=5504(curator1) группы=5504(curator1),4444(curators)
+uid=5505(curator2) gid=5505(curator2) группы=5505(curator2),4444(curators)

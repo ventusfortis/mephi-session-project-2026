@@ -1,0 +1,13 @@
+/data/mephi-2026:
+итого 28
+drwxrws---+ 3 root  developers unconfined_u:object_r:default_t:s0 4096 окт  5 22:02 .
+drwxr-xr-x. 3 root  root       unconfined_u:object_r:default_t:s0 4096 окт  5 22:02 ..
+drwxrws---+ 2 user3 developers unconfined_u:object_r:default_t:s0 4096 окт  5 22:02 dir-user3
+-rw-rw----+ 1 user1 developers unconfined_u:object_r:default_t:s0   35 окт  5 22:03 file-user1.txt
+
+/mephi-web:
+итого 28
+drwxr-xr-x.  3 root root system_u:object_r:httpd_sys_content_t:s0      4096 окт  5 22:16 .
+dr-xr-xr-x. 20 root root system_u:object_r:root_t:s0                   4096 окт  5 22:16 ..
+-rw-r--r--.  1 root root unconfined_u:object_r:httpd_sys_content_t:s0    27 окт  5 22:16 index.html
+drwx------.  2 root root system_u:object_r:httpd_sys_content_t:s0     16384 окт  5 22:16 lost+found
